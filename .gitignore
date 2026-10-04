@@ -1,5 +1,3 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
 # dependencies
 /node_modules
 /.pnp
@@ -20,22 +18,26 @@
 # production
 /build
 
-# misc
-.DS_Store
-*.pem
+# environment files (ignore all secrets, permit example template if present)
+.env*
+!.env.example
 
-# debug
+# vercel
+.vercel
+
+# debug logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-.env*
-
-# vercel
-.vercel
+# system & editor files
+.DS_Store
+*.pem
+.cursor/
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
 
 # typescript
 *.tsbuildinfo
-next-env.d.ts
