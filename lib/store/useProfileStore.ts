@@ -265,8 +265,6 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
           id: crypto.randomUUID(),
           sort_order: state.links.length,
           order_index: state.links.length,
-          is_social: false,
-          subtitle: null,
           ...link,
         },
       ]),
