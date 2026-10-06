@@ -80,6 +80,12 @@ let stripeClient: Stripe | null = null;
 
 export function getStripe(): Stripe {
   if (!stripeClient) {
+    console.log(
+      "Stripe Client Initialized With Prefix:",
+      process.env.STRIPE_SECRET_KEY
+        ? process.env.STRIPE_SECRET_KEY.slice(0, 8)
+        : "UNDEFINED",
+    );
     stripeClient = new Stripe(getStripeSecretKey());
   }
   return stripeClient;

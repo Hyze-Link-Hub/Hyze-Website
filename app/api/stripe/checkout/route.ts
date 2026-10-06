@@ -121,6 +121,16 @@ export async function POST(request: Request) {
       }
     }
 
+    console.log("=== STRIPE RUNTIME DEBUG ===");
+    console.log(
+      "Active Key Prefix:",
+      process.env.STRIPE_SECRET_KEY
+        ? process.env.STRIPE_SECRET_KEY.slice(0, 8)
+        : "UNDEFINED",
+    );
+    console.log("Price ID Attempted:", process.env.STRIPE_PRO_PRICE_ID || "UNDEFINED");
+    console.log("============================");
+
     const session = await getStripe().checkout.sessions.create({
       mode,
       customer: customerId,
