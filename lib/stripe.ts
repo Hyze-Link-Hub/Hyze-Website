@@ -80,8 +80,11 @@ let stripeClient: Stripe | null = null;
 
 export function getStripe(): Stripe {
   if (!stripeClient) {
+    if (!process.env.STRIPE_SECRET_KEY) {
+      throw new StripeConfigError("Missing STRIPE_SECRET_KEY in environment variables");
+    }
     console.log(
-      "Stripe Client Initialized With Prefix:",
+      "getStripe() initializing with key prefix:",
       process.env.STRIPE_SECRET_KEY
         ? process.env.STRIPE_SECRET_KEY.slice(0, 8)
         : "UNDEFINED",

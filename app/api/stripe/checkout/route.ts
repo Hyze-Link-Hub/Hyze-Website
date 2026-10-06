@@ -102,6 +102,11 @@ export async function POST(request: Request) {
   }
 
   try {
+    console.log("=== STRIPE RUNTIME DEBUG (START) ===");
+    console.log("STRIPE_SECRET_KEY prefix:", process.env.STRIPE_SECRET_KEY?.slice(0, 8));
+    console.log("STRIPE_PRO_PRICE_ID:", process.env.STRIPE_PRO_PRICE_ID);
+    console.log("====================================");
+
     // Hosted Checkout does not render with the publishable key, but production
     // setup still requires it so client and server keys stay paired.
     getStripePublishableKey();
@@ -120,16 +125,6 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: error.message }, { status: 500 });
       }
     }
-
-    console.log("=== STRIPE RUNTIME DEBUG ===");
-    console.log(
-      "Active Key Prefix:",
-      process.env.STRIPE_SECRET_KEY
-        ? process.env.STRIPE_SECRET_KEY.slice(0, 8)
-        : "UNDEFINED",
-    );
-    console.log("Price ID Attempted:", process.env.STRIPE_PRO_PRICE_ID || "UNDEFINED");
-    console.log("============================");
 
     const session = await getStripe().checkout.sessions.create({
       mode,
