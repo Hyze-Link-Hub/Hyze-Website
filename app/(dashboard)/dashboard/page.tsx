@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import AnalyticsTab from "@/components/dashboard/AnalyticsTab";
+import SubscriptionStatusCard from "@/components/dashboard/SubscriptionStatusCard";
 
 export const metadata: Metadata = {
   title: "Overview — Hazy",
@@ -25,6 +26,7 @@ export default function DashboardPage() {
         </span>
       </header>
 
+      <SubscriptionStatusCard />
       <AnalyticsTab />
     </div>
   );

@@ -189,8 +189,15 @@ function Navbar() {
       <div className="mx-auto grid h-16 max-w-6xl grid-cols-[1fr_auto_1fr] items-center px-6">
         <Link
           href="/"
-          className="justify-self-start font-[family-name:var(--font-syne)] text-lg font-bold tracking-tight text-gradient-brand"
+          className="justify-self-start inline-flex items-center gap-2.5 font-[family-name:var(--font-syne)] text-lg font-bold tracking-tight text-gradient-brand"
         >
+          <Image
+            src="/logo.png"
+            alt="Hazy Logo"
+            width={32}
+            height={32}
+            className="rounded-lg shadow-[0_0_12px_rgba(157,123,255,0.35)]"
+          />
           Hazy.tech
         </Link>
 
@@ -547,18 +554,6 @@ export default function Home() {
         </section>
       </main>
 
-      <footer className="relative z-10 border-t border-subtle bg-surface-base/60">
-        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-6 py-8 text-sm text-white/40 sm:flex-row">
-          <p className="label-mono">© 2026 Hazy.tech. All rights reserved.</p>
-          <nav className="flex gap-6">
-            {["Terms", "Privacy", "Contact"].map((label) => (
-              <a key={label} href="#" className="transition hover:text-accent-ice">
-                {label}
-              </a>
-            ))}
-          </nav>
-        </div>
-      </footer>
     </div>
   );
 }

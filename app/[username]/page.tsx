@@ -1,5 +1,6 @@
 import DynamicBackground from "@/components/DynamicBackground";
 import GlassPanel from "@/components/GlassPanel";
+import HazyWatermark from "@/components/HazyWatermark";
 import RecordView from "@/components/RecordView";
 import ScrollSnapShell from "@/components/ScrollSnapShell";
 import HubSection from "@/components/sections/HubSection";
@@ -164,6 +165,8 @@ export default async function ProfilePage({ params }: PageProps<"/[username]">) 
   const fontClass =
     data.theme.font === "serif" ? "font-serif" : data.theme.font === "mono" ? "font-mono" : "font-sans";
 
+  const hideWatermark = data.is_premium === true && data.hide_branding === true;
+
   return (
     <div className={fontClass}>
       <RecordView profileId={data.id} />
@@ -176,6 +179,7 @@ export default async function ProfilePage({ params }: PageProps<"/[username]">) 
           <VibeSection profile={profile} />
           <HubSection uploads={uploads} stats={stats} />
         </ScrollSnapShell>
+        {!hideWatermark ? <HazyWatermark username={data.username} /> : null}
       </DynamicBackground>
     </div>
   );

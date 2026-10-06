@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Outfit, Playfair_Display, Space_Mono, Syne } from "next/font/google";
+import SiteFooter from "@/components/SiteFooter";
 import { PostHogProvider } from "./providers";
 import "./globals.css";
 
@@ -44,7 +45,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body
         className={`${inter.variable} ${playfair.variable} ${spaceMono.variable} relative h-full text-foreground`}
       >
-        <PostHogProvider>{children}</PostHogProvider>
+        <PostHogProvider>
+          {children}
+          <SiteFooter />
+        </PostHogProvider>
       </body>
     </html>
   );

@@ -14,8 +14,12 @@ create table public.profiles (
   lastfm_username text,
   show_lastfm boolean not null default true,
   show_badges boolean not null default true,
-  -- Premium is service-role only. Clients can read it, never write it.
+  -- Premium and Stripe ids are service-role only. Clients can read them, never write them.
   is_premium boolean not null default false,
+  -- Pro owners may hide the public "Made with Hazy" watermark.
+  hide_branding boolean not null default false,
+  stripe_customer_id text unique,
+  stripe_subscription_id text unique,
   -- Written by the service role during Discord sync; drives discord badges.
   discord_role_ids text[] not null default '{}',
   -- { spotify: { albumArt, title, artist } } or { game: { name } }
@@ -417,10 +421,12 @@ grant update (is_new, is_equipped, is_pinned, order_index) on public.awarded_bad
 -- them. New client-editable profile columns must be added to these grants.
 revoke insert, update on table public.profiles from anon, authenticated;
 grant insert (id, username, display_name, bio, theme, avatar_url, discord_id,
-              show_discord_status, lastfm_username, show_lastfm, show_badges)
+              show_discord_status, lastfm_username, show_lastfm, show_badges,
+              hide_branding)
   on public.profiles to authenticated;
 grant update (id, username, display_name, bio, theme, avatar_url, discord_id,
-              show_discord_status, lastfm_username, show_lastfm, show_badges)
+              show_discord_status, lastfm_username, show_lastfm, show_badges,
+              hide_branding)
   on public.profiles to authenticated;
 
 create or replace function public.check_view_milestones()
@@ -554,3 +560,53 @@ create policy "Users can delete their own channels"
   for delete
   to authenticated
   using ((select auth.uid()) = profile_id);
+
+-- Existing databases created before billing / branding columns:
+alter table public.profiles add column if not exists is_premium boolean not null default false;
+alter table public.profiles add column if not exists hide_branding boolean not null default false;
+alter table public.profiles add column if not exists stripe_customer_id text;
+alter table public.profiles add column if not exists stripe_subscription_id text;
+
+create unique index if not exists profiles_stripe_customer_id_key
+  on public.profiles (stripe_customer_id);
+
+create unique index if not exists profiles_stripe_subscription_id_key
+  on public.profiles (stripe_subscription_id);
+
+-- Signed-in users can update their own profile, but Pro access comes from Stripe webhooks.
+create or replace function public.protect_profile_billing_columns()
+returns trigger
+language plpgsql
+set search_path = ''
+as $$
+begin
+  if coalesce(auth.role(), '') = 'service_role'
+     or current_user in ('postgres', 'supabase_admin', 'service_role') then
+    return new;
+  end if;
+
+  if tg_op = 'INSERT' then
+    new.is_premium := false;
+    new.stripe_customer_id := null;
+    new.stripe_subscription_id := null;
+    return new;
+  end if;
+
+  if new.is_premium is distinct from old.is_premium
+     or new.stripe_customer_id is distinct from old.stripe_customer_id
+     or new.stripe_subscription_id is distinct from old.stripe_subscription_id then
+    raise exception 'profile billing columns can only be changed by the service role';
+  end if;
+
+  return new;
+end;
+$$;
+
+drop trigger if exists protect_profile_billing_columns on public.profiles;
+
+create trigger protect_profile_billing_columns
+  before insert or update on public.profiles
+  for each row
+  execute function public.protect_profile_billing_columns();
+
+revoke all on function public.protect_profile_billing_columns() from public, anon, authenticated;

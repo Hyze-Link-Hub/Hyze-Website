@@ -302,9 +302,12 @@ export type Database = {
           discord_id: string | null
           discord_role_ids: string[]
           display_name: string | null
+          hide_branding: boolean
           id: string
           is_premium: boolean
           lastfm_username: string | null
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
           live_status: Json | null
           show_badges: boolean
           show_discord_status: boolean
@@ -319,9 +322,12 @@ export type Database = {
           discord_id?: string | null
           discord_role_ids?: string[]
           display_name?: string | null
+          hide_branding?: boolean
           id: string
           is_premium?: boolean
           lastfm_username?: string | null
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
           live_status?: Json | null
           show_badges?: boolean
           show_discord_status?: boolean
@@ -336,9 +342,12 @@ export type Database = {
           discord_id?: string | null
           discord_role_ids?: string[]
           display_name?: string | null
+          hide_branding?: boolean
           id?: string
           is_premium?: boolean
           lastfm_username?: string | null
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
           live_status?: Json | null
           show_badges?: boolean
           show_discord_status?: boolean

@@ -2,29 +2,39 @@
 @config "../tailwind.config.ts";
 
 :root {
-  --background: #050508;
+  --background: #0e0d13;
   --foreground: #f4f0ea;
-  --glow-warm: rgba(255, 140, 66, 0.22);
-  --glow-neon: rgba(45, 212, 191, 0.18);
-  --glow-rose: rgba(244, 114, 182, 0.14);
+  --glow-warm: rgba(157, 123, 255, 0.22);
+  --glow-neon: rgba(226, 220, 255, 0.16);
+  --glow-rose: rgba(117, 82, 163, 0.18);
+
+  /* Official Hazy brand palette */
+  --brand-glow: #e2dcff;
+  --brand-purple: #9d7bff;
+  --brand-muted: #7552a3;
+  --brand-card: #1f1d2b;
+  --brand-deep: #0e0d13;
 
   /* Legacy glass tokens, aliased onto the surface ramp below */
   --glass-bg: color-mix(in oklab, var(--surface-raised) 55%, transparent);
   --glass-border: var(--border-subtle);
   --glass-blur: 40px;
-  --accent-neon: var(--accent-cyan);
+  --accent-neon: var(--brand-purple);
 
-  /* Hazy elevation ramp: base → raised cards → overlays/modals */
-  --surface-base: #060b12;
-  --surface-raised: #0d1526;
-  --surface-overlay: #131d35;
+  /* Hazy elevation ramp: deep bg → card surfaces → overlays/modals */
+  --surface-base: #0e0d13;
+  --surface-raised: #1f1d2b;
+  --surface-overlay: #2a2740;
   --border-subtle: rgba(255, 255, 255, 0.08);
   --border-strong: rgba(255, 255, 255, 0.14);
-  --accent-cyan: #36d6ff;
-  --accent-ice: #8ef3ff;
+  /* accent-cyan / accent-ice kept as utility names; values map to brand purple */
+  --accent-cyan: #9d7bff;
+  --accent-ice: #e2dcff;
   --shadow-glass: 0 20px 50px rgba(0, 0, 0, 0.6);
-  --shadow-glow-cyan: 0 0 40px -10px rgba(54, 214, 255, 0.55);
-  --shadow-glow-cyan-lg: 0 0 40px -4px rgba(54, 214, 255, 0.75), 0 0 90px -12px rgba(54, 214, 255, 0.5);
+  --shadow-glow-cyan: 0 0 40px -10px rgba(157, 123, 255, 0.55);
+  --shadow-glow-cyan-lg: 0 0 40px -4px rgba(157, 123, 255, 0.75), 0 0 90px -12px rgba(157, 123, 255, 0.5);
+  --shadow-glow-purple: 0 0 40px -10px rgba(157, 123, 255, 0.55);
+  --shadow-glow-purple-lg: 0 0 40px -4px rgba(157, 123, 255, 0.75), 0 0 90px -12px rgba(157, 123, 255, 0.5);
 }
 
 @theme inline {
@@ -32,6 +42,11 @@
   --color-foreground: var(--foreground);
   --color-glass: var(--glass-bg);
   --color-accent-neon: var(--accent-neon);
+  --color-brand-glow: var(--brand-glow);
+  --color-brand-purple: var(--brand-purple);
+  --color-brand-muted: var(--brand-muted);
+  --color-brand-card: var(--brand-card);
+  --color-brand-deep: var(--brand-deep);
   --blur-glass: var(--glass-blur);
   --font-sans: var(--font-inter), ui-sans-serif, sans-serif;
   --font-serif: var(--font-playfair), ui-serif, serif;
@@ -65,7 +80,7 @@
 }
 
 @utility field-input {
-  @apply h-11 w-full rounded-full border border-subtle bg-surface-base/70 px-4 text-sm text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] outline-none transition placeholder:text-white/30 hover:border-strong focus:border-accent-cyan/60 focus:shadow-[0_0_0_3px_rgba(54,214,255,0.12),0_0_22px_-6px_rgba(54,214,255,0.6)] disabled:cursor-not-allowed disabled:opacity-40;
+  @apply h-11 w-full rounded-full border border-subtle bg-surface-base/70 px-4 text-sm text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] outline-none transition placeholder:text-white/30 hover:border-strong focus:border-accent-cyan/60 focus:shadow-[0_0_0_3px_rgba(157,123,255,0.12),0_0_22px_-6px_rgba(157,123,255,0.6)] disabled:cursor-not-allowed disabled:opacity-40;
 }
 
 @utility icon-btn {

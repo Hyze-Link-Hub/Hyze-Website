@@ -25,6 +25,7 @@ export type Profile = {
   show_lastfm: boolean;
   show_badges: boolean;
   is_premium: boolean;
+  hide_branding: boolean;
   live_status: Json | null;
 };
 
@@ -93,6 +94,7 @@ type ProfileState = {
   setBadgeEquipped: (awardId: string, isEquipped: boolean) => Promise<void>;
   setBadgePinned: (awardId: string, isPinned: boolean) => Promise<void>;
   setShowBadges: (showBadges: boolean) => Promise<void>;
+  setHideBranding: (hideBranding: boolean) => Promise<void>;
   reorderAwardedBadges: (orderedAwardIds: string[]) => void;
   loadUserProfile: () => Promise<Profile | null>;
   fetchProfile: () => Promise<Profile | null>;
@@ -160,6 +162,7 @@ const emptyProfile: Profile = {
   show_lastfm: true,
   show_badges: true,
   is_premium: false,
+  hide_branding: false,
   live_status: null,
 };
 
@@ -482,6 +485,34 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
     }
   },
 
+  setHideBranding: async (hideBranding) => {
+    const profile = get().profile;
+    if (!profile.is_premium) {
+      throw new Error("Upgrade to Pro to remove branding");
+    }
+    const previous = profile.hide_branding;
+    if (previous === hideBranding) return;
+
+    set((state) => ({
+      profile: { ...state.profile, hide_branding: hideBranding },
+      initialProfile: { ...state.initialProfile, hide_branding: hideBranding },
+    }));
+
+    const { supabase, user } = await requireUser();
+    const { error } = await supabase
+      .from("profiles")
+      .update({ hide_branding: hideBranding })
+      .eq("id", user.id);
+
+    if (error) {
+      set((state) => ({
+        profile: { ...state.profile, hide_branding: previous },
+        initialProfile: { ...state.initialProfile, hide_branding: previous },
+      }));
+      throw error;
+    }
+  },
+
   reorderAwardedBadges: (orderedAwardIds) =>
     set((state) => {
       const rank = new Map(orderedAwardIds.map((id, index) => [id, index]));
@@ -536,6 +567,7 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
       show_lastfm: row.show_lastfm,
       show_badges: row.show_badges,
       is_premium: row.is_premium,
+      hide_branding: row.hide_branding ?? false,
       live_status: row.live_status,
     };
 

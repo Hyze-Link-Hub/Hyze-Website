@@ -79,7 +79,7 @@ export default function DynamicBackground({
 
   const fallbackColor = /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(theme.background_value)
     ? theme.background_value
-    : "#060b12";
+    : "#0E0D13";
   const isImage = theme.background_type === "image";
   const isVideo = theme.background_type === "video";
 

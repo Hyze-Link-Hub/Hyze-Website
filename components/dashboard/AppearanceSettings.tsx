@@ -1,6 +1,8 @@
 "use client";
 
 import GlassPanel from "@/components/GlassPanel";
+import ProMark from "@/components/dashboard/ProMark";
+import Toggle from "@/components/dashboard/Toggle";
 import { avatarInitials } from "@/lib/avatar";
 import { hoverLift, tapPress } from "@/lib/motion";
 import { useProfileStore } from "@/lib/store/useProfileStore";
@@ -123,17 +125,29 @@ export default function AppearanceSettings() {
   const updateProfileLocally = useProfileStore((state) => state.updateProfileLocally);
   const uploadAvatar = useProfileStore((state) => state.uploadAvatar);
   const syncFromDiscord = useProfileStore((state) => state.syncFromDiscord);
+  const setHideBranding = useProfileStore((state) => state.setHideBranding);
   const [avatarStatus, setAvatarStatus] = useState<"idle" | "uploading" | "error">("idle");
   const [isSyncing, setIsSyncing] = useState(false);
   const [syncError, setSyncError] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const [brandingError, setBrandingError] = useState<string | null>(null);
   const [dragOver, setDragOver] = useState(false);
   const theme = profile.theme;
   const initials = avatarInitials(profile.title || profile.username);
 
   function updateTheme(partial: Partial<ProfileTheme>) {
     updateProfileLocally({ theme: { ...theme, ...partial } });
+  }
+
+  async function toggleHideBranding() {
+    if (!profile.is_premium) return;
+    setBrandingError(null);
+    try {
+      await setHideBranding(!profile.hide_branding);
+    } catch (err) {
+      setBrandingError(err instanceof Error ? err.message : "Couldn’t update branding.");
+    }
   }
 
   async function setAvatarFile(file: File | undefined) {
@@ -467,6 +481,45 @@ export default function AppearanceSettings() {
         ) : null}
 
         {!profile.is_premium ? <LockedProPlaceholders /> : null}
+      </Panel>
+
+      <Panel
+        title="Branding"
+        hint="Control the Hazy watermark on your public profile page."
+      >
+        <div className="mt-5 flex items-center justify-between gap-4">
+          <div className="min-w-0">
+            <p className="flex flex-wrap items-center gap-2 text-sm font-medium text-white">
+              Remove Hazy Branding from Profile
+              {!profile.is_premium ? <ProMark /> : null}
+            </p>
+            <p className="mt-1 text-xs leading-relaxed text-white/40">
+              {profile.is_premium
+                ? profile.hide_branding
+                  ? "On — your public page has no Hazy watermark."
+                  : "Off — visitors see a subtle Create with Hazy badge."
+                : "Upgrade to Pro to remove branding."}
+            </p>
+          </div>
+          <Toggle
+            checked={profile.is_premium ? profile.hide_branding : false}
+            label="Remove Hazy Branding from Profile"
+            disabled={!profile.is_premium}
+            onToggle={() => void toggleHideBranding()}
+          />
+        </div>
+        {!profile.is_premium ? (
+          <motion.div whileHover={hoverLift} whileTap={tapPress} className="mt-4">
+            <Link href="/pricing" className="btn-primary w-full">
+              Upgrade to Pro to remove branding
+            </Link>
+          </motion.div>
+        ) : null}
+        {brandingError ? (
+          <p role="alert" className="mt-3 text-[11px] text-rose-300">
+            {brandingError}
+          </p>
+        ) : null}
       </Panel>
     </div>
   );
